@@ -39,10 +39,10 @@ import javax.swing.table.JTableHeader;
 
 import entity.Ban;
 import service.BanService;
-import service.CTHDService;
+/*import service.CTHDService;
 import service.HoaDonService;
 import service.ThucUongService;
-
+*/
 
 
 public class Bills extends JFrame  implements ActionListener, MouseListener{
@@ -68,9 +68,10 @@ public class Bills extends JFrame  implements ActionListener, MouseListener{
 	private JButton btnInHoaDon;
 	private JTable tblBan;
 	private DefaultTableModel modelBan;
-	private HoaDonService hoaDonService;
-	private CTHDService cthdService;
-	private ThucUongService thucUongService;
+	/*
+	 * private HoaDonService hoaDonService; private CTHDService cthdService; private
+	 * ThucUongService thucUongService;
+	 */
 
 	/**
 	 * Launch the application.
@@ -85,9 +86,13 @@ public class Bills extends JFrame  implements ActionListener, MouseListener{
 	}
 	public Bills() throws MalformedURLException, RemoteException, NotBoundException {
 		banService = (BanService) Naming.lookup("rmi://192.168.1.99:9999/banService");
-		hoaDonService = (HoaDonService) Naming.lookup("rmi://192.168.1.99:9999/hoaDonService");
-		cthdService  = (CTHDService) Naming.lookup("rmi://192.168.1.99:9999/cthdService");
-		thucUongService = (ThucUongService) Naming.lookup("rmi://192.168.1.99:9999/thucUongService");
+		/*
+		 * hoaDonService = (HoaDonService)
+		 * Naming.lookup("rmi://192.168.1.99:9999/hoaDonService"); cthdService =
+		 * (CTHDService) Naming.lookup("rmi://192.168.1.99:9999/cthdService");
+		 * thucUongService = (ThucUongService)
+		 * Naming.lookup("rmi://192.168.1.99:9999/thucUongService");
+		 */
 		getContentPane().setLayout(null);
 		pMain = new Panel();
 		pMain.setBounds(0, 0, 1281, 606);
@@ -352,7 +357,7 @@ public class Bills extends JFrame  implements ActionListener, MouseListener{
 		pThanhToan.add(btnInHoaDon);
 		
 		loadBan();
-		System.out.println(hoaDonService.getHoaDonTheoMaBan(1));
+		/* System.out.println(hoaDonService.getHoaDonTheoMaBan(1)); */
 	}
 	public void loadBan() throws RemoteException {
 

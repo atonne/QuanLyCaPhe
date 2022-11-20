@@ -22,19 +22,26 @@ public class KhachHang implements Serializable {
 	private String tenKH;
 	private String sdt;
 	private String diaChi;
-	private Date ngaySinh;
-	private String gioiTinh;
-	private int diemTichLuy;
-	public KhachHang(int maKH, String tenKH, String sdt, String diaChi, Date ngaySinh, String gioiTinh,
-			int diemTichLuy) {
+	private String tuoi;
+
+	private String diemTichLuy;
+	public KhachHang(int maKH, String diaChi,String diemTichLuy, String sdt,String tenKH,  String tuoi) {
 		super();
 		this.maKH = maKH;
 		this.tenKH = tenKH;
 		this.sdt = sdt;
 		this.diaChi = diaChi;
-		this.ngaySinh = ngaySinh;
-		this.gioiTinh = gioiTinh;
+		this.tuoi = tuoi;
 		this.diemTichLuy = diemTichLuy;
+	}
+	public KhachHang( String diaChi,String diemTichLuy, String sdt,String tenKH,  String tuoi) {
+		super();
+		this.tenKH = tenKH;
+		this.sdt = sdt;
+		this.diaChi = diaChi;
+		this.tuoi = tuoi;
+		this.diemTichLuy = diemTichLuy;
+		// TODO Auto-generated constructor stub
 	}
 	public KhachHang() {
 		super();
@@ -43,7 +50,7 @@ public class KhachHang implements Serializable {
 	@Override
 	public String toString() {
 		return "KhachHang [maKH=" + maKH + ", tenKH=" + tenKH + ", sdt=" + sdt + ", diaChi=" + diaChi + ", ngaySinh="
-				+ ngaySinh + ", gioiTinh=" + gioiTinh + ", diemTichLuy=" + diemTichLuy + "]";
+				+ tuoi + ", tuoi="  + ", diemTichLuy=" + diemTichLuy + "]";
 	}
 	@Override
 	public int hashCode() {
@@ -89,25 +96,21 @@ public class KhachHang implements Serializable {
 	public void setDiaChi(String diaChi) {
 		this.diaChi = diaChi;
 	}
-	public Date getNgaySinh() {
-		return ngaySinh;
+	public String getTuoi() {
+		return tuoi;
 	}
-	public void setNgaySinh(Date ngaySinh) {
-		this.ngaySinh = ngaySinh;
+	public void setTuoi(String tuoi) {
+		this.tuoi = tuoi;
 	}
-	public String getGioiTinh() {
-		return gioiTinh;
-	}
-	public void setGioiTinh(String gioiTinh) {
-		this.gioiTinh = gioiTinh;
-	}
-	public int getDiemTichLuy() {
+	public String getDiemTichLuy() {
 		return diemTichLuy;
 	}
-	public void setDiemTichLuy(int diemTichLuy) {
+	public void setDiemTichLuy(String diemTichLuy) {
 		this.diemTichLuy = diemTichLuy;
 	}
-	
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 	
 	
 }

@@ -183,9 +183,31 @@ public class Home extends JFrame implements ActionListener{
 		// TODO Auto-generated method stub		
 		Object o = e.getSource();
 		if(o.equals(btnNhanVien))
-			loadFrmNhanVien();
+			try {
+				loadFrmNhanVien();
+			} catch (MalformedURLException e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+			} catch (RemoteException e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+			} catch (NotBoundException e3) {
+				// TODO Auto-generated catch block
+				e3.printStackTrace();
+			}
 		if(o.equals(btnKhachHang))
-			loadFrmKhachHang();
+			try {
+				loadFrmKhachHang();
+			} catch (MalformedURLException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			} catch (RemoteException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			} catch (NotBoundException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
 		if(o.equals(btnThucUong))
 			loadFrmNuoc();
 		if(o.equals(btnBan))
@@ -238,7 +260,7 @@ public class Home extends JFrame implements ActionListener{
 		
 	}
 	
-	public void loadFrmNhanVien() {
+	public void loadFrmNhanVien() throws MalformedURLException, RemoteException, NotBoundException {
 		setTitle("Quáº£n lÃ½ nhÃ¢n viÃªn");
 		resetColorMenu();
 		pContent.removeAll();
@@ -248,7 +270,7 @@ public class Home extends JFrame implements ActionListener{
 		pContent.add(frmNhanVien.getPanel());
 	
 }
-	public void loadFrmKhachHang() {
+	public void loadFrmKhachHang() throws MalformedURLException, RemoteException, NotBoundException {
 		setTitle("Quáº£n lÃ½ khÃ¡ch hÃ ng");
 		resetColorMenu();
 		pContent.removeAll();

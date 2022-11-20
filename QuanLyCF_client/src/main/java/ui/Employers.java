@@ -6,36 +6,62 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.List;
+
 
 import javax.swing.JButton;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
+
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-public class Employers extends JFrame {
 
+import entity.NhanVien;
+
+import service.NhanVienService;
+
+public class Employers extends JFrame implements ActionListener, MouseListener {
+	private static final long serialVersionUID = 9196580459952842716L;
 	private JPanel contentPane;
 	private Panel pMain;
 
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
-	private JTextField textField_6;
-	private String column[] = { "Mã NV", "Tên Nhân Viên", "Số điện thoại ", "Tuổi", "Email", "Giới tính", "Địa Chỉ" };
+	
+	private String column[] = { "Mã NV", "Chức Vụ","Địa Chỉ", "Số điện thoại ","Tên Nhân Viên", "Tuổi" };
 	private DefaultTableModel modelNhanvien;
 	private JTable tableNV;
+	private JTextField txtma;
+	private JTextField txtten;
+	private JTextField txtdiachi;
+	private JTextField txtsdt;
+	private JTextField txtchucvu;
+	private JTextField txttuoi;
+
+	private JTextField txttimkiem;
+	private JButton btnThem;
+	private JButton btnSua;
+	private JButton btnXoa;
+	private JButton btnXoarong;
+	private JButton btnreset;
+	private NhanVienService nhanVienService;
+	private JButton btntim;
 
 
 
@@ -50,13 +76,16 @@ public class Employers extends JFrame {
 		return pMain;
 	}
 	
-	public Employers() {
+	public Employers() throws MalformedURLException, RemoteException, NotBoundException {
 		getContentPane().setLayout(null);
 		pMain = new Panel();
 		pMain.setBackground(Color.WHITE);
 		pMain.setBounds(0, 0, 1281, 606);
 		getContentPane().add(pMain);
 		pMain.setLayout(null);
+		
+		nhanVienService = (NhanVienService) Naming.lookup("rmi://192.168.1.3:9999/nhanVienService");
+		
 		
 		JPanel panelnhaplieu = new JPanel();
 		panelnhaplieu.setLayout(null);
@@ -84,7 +113,7 @@ public class Employers extends JFrame {
 		lblDiachi.setBounds(409, 11, 66, 23);
 		panelnhaplieu.add(lblDiachi);
 		
-		JLabel lblEmail = new JLabel("Email :");
+		JLabel lblEmail = new JLabel("Chức Vụ :");
 		lblEmail.setFont(new Font("Tahoma", Font.BOLD, 12));
 		lblEmail.setBounds(784, 11, 66, 23);
 		panelnhaplieu.add(lblEmail);
@@ -94,59 +123,49 @@ public class Employers extends JFrame {
 		lblTuoi.setBounds(784, 61, 66, 23);
 		panelnhaplieu.add(lblTuoi);
 		
-		textField = new JTextField("TL123");
-		textField.setColumns(10);
-		textField.setBounds(122, 12, 226, 20);
-		panelnhaplieu.add(textField);
+		txtma = new JTextField(" ");
+		txtma.setColumns(10);
+		txtma.setBounds(122, 12, 226, 20);
+		panelnhaplieu.add(txtma);
 		
-		textField_1 = new JTextField("Huynh Van Nghe");
-		textField_1.setColumns(10);
-		textField_1.setBounds(122, 62, 226, 20);
-		panelnhaplieu.add(textField_1);
+		txtten = new JTextField("Huynh Van Nghe");
+		txtten.setColumns(10);
+		txtten.setBounds(122, 62, 226, 20);
+		panelnhaplieu.add(txtten);
 		
-		textField_2 = new JTextField("Hồ văn Nhánh");
-		textField_2.setColumns(10);
-		textField_2.setBounds(507, 12, 226, 20);
-		panelnhaplieu.add(textField_2);
+		txtdiachi = new JTextField("Hồ văn Nhánh");
+		txtdiachi.setColumns(10);
+		txtdiachi.setBounds(507, 12, 226, 20);
+		panelnhaplieu.add(txtdiachi);
 		
-		textField_3 = new JTextField("0987876564");
-		textField_3.setColumns(10);
-		textField_3.setBounds(507, 62, 226, 20);
-		panelnhaplieu.add(textField_3);
+		txtsdt = new JTextField("0987876564");
+		txtsdt.setColumns(10);
+		txtsdt.setBounds(507, 62, 226, 20);
+		panelnhaplieu.add(txtsdt);
 		
-		textField_4 = new JTextField("thidet@gmail.com");
-		textField_4.setColumns(10);
-		textField_4.setBounds(892, 12, 226, 20);
-		panelnhaplieu.add(textField_4);
+		txtchucvu = new JTextField("Quan Ly");
+		txtchucvu.setColumns(10);
+		txtchucvu.setBounds(892, 12, 226, 20);
+		panelnhaplieu.add(txtchucvu);
 		
-		textField_5 = new JTextField("18");
-		textField_5.setColumns(10);
-		textField_5.setBounds(892, 62, 226, 20);
-		panelnhaplieu.add(textField_5);
-		
-		JLabel lblGioitinh = new JLabel("Giới Tính :");
-		lblGioitinh.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblGioitinh.setBounds(784, 120, 66, 23);
-		panelnhaplieu.add(lblGioitinh);
-		
-		JRadioButton radnam = new JRadioButton("Nam");
-		radnam.setSelected(true);
-		radnam.setBounds(892, 120, 75, 23);
-		panelnhaplieu.add(radnam);
+		txttuoi = new JTextField("18");
+		txttuoi.setColumns(10);
+		txttuoi.setBounds(892, 62, 226, 20);
+		panelnhaplieu.add(txttuoi);
 		
 		JLabel lbltim = new JLabel("Tìm kiếm");
 		lbltim.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lbltim.setBounds(10, 113, 102, 30);
 		panelnhaplieu.add(lbltim);
 		
-		textField_6 = new JTextField();
-		textField_6.setToolTipText("Nhập mã hoặc tên nhân viên cần tìm");
-		textField_6.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		textField_6.setColumns(10);
-		textField_6.setBounds(122, 116, 362, 30);
-		panelnhaplieu.add(textField_6);
+		txttimkiem = new JTextField();
+		txttimkiem.setToolTipText("Nhập mã hoặc tên nhân viên cần tìm");
+		txttimkiem.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txttimkiem.setColumns(10);
+		txttimkiem.setBounds(122, 116, 362, 30);
+		panelnhaplieu.add(txttimkiem);
 		
-		JButton btntim = new JButton("Tìm Kiếm");
+		btntim = new JButton("Tìm Kiếm");
 		btntim.setMnemonic(KeyEvent.VK_K);
 		btntim.setForeground(Color.WHITE);
 		btntim.setBackground(new Color(161, 122, 96));
@@ -171,33 +190,239 @@ public class Employers extends JFrame {
 		scrollPane1.setBounds(10, 11, 1063, 304);
 		paneldb.add(scrollPane1);
 		
-		JButton btnThem = new JButton("Thêm");
+		btnThem = new JButton("Thêm");
 		btnThem.setMnemonic(KeyEvent.VK_T);
 		btnThem.setForeground(Color.WHITE);
 		btnThem.setBounds(1083, 11, 124, 37);
 		btnThem.setBackground(new Color(161, 122, 96));
 		paneldb.add(btnThem);
 		
-		JButton btnSua = new JButton("Sửa");
+		btnSua = new JButton("Sửa");
 		btnSua.setMnemonic(KeyEvent.VK_S);
 		btnSua.setForeground(Color.WHITE);
 		btnSua.setBounds(1083, 59, 124, 37);
 		btnSua.setBackground(new Color(161, 122, 96));
 		paneldb.add(btnSua);
 		
-		JButton btnXoa = new JButton("Xóa");
-		btnXoa.setMnemonic(KeyEvent.VK_X);
+		btnXoa = new JButton("Xóa");
 		btnXoa.setForeground(Color.WHITE);
 		btnXoa.setBounds(1083, 107, 124, 37);
 		btnXoa.setBackground(new Color(161, 122, 96));
 		paneldb.add(btnXoa);
 		
-		JButton btnXoarong = new JButton("Xóa rỗng");
+		btnXoarong = new JButton("Xóa rỗng");
 		btnXoarong.setBackground(new Color(161, 122, 96));
 		btnXoarong.setMnemonic(KeyEvent.VK_R);
 		btnXoarong.setForeground(Color.WHITE);
 		btnXoarong.setBounds(1083, 155, 124, 37);
 		paneldb.add(btnXoarong);
+		
+		btnreset = new JButton("Reset");
+		btnreset.setMnemonic(KeyEvent.VK_R);
+		btnreset.setForeground(Color.WHITE);
+		btnreset.setBackground(new Color(161, 122, 96));
+		btnreset.setBounds(1083, 203, 124, 37);
+		paneldb.add(btnreset);
+		
+		loadTable();
+		
+		
+		btnXoarong.addActionListener(this);
+		btnThem.addActionListener(this);
+		tableNV.addMouseListener(this);
+		btnSua.addActionListener(this);
+		btnXoa.addActionListener(this);
+		btntim.addActionListener(this);
+		btnreset.addActionListener(this);
+
+		
+	}
+	private void loadTable() throws RemoteException {
+		clearTable();
+		List<NhanVien> lsNV = nhanVienService.getListNV();
+		for(NhanVien nv: lsNV) {
+			modelNhanvien.addRow(new Object[] {
+					nv.getMaNV(),nv.getChucVu(),nv.getDiaChi(),nv.getSdt(),nv.getTenNhanVien(),nv.getTuoi()
+			});
+		}
+	}
+	
+	private void clearTable() {
+		while(tableNV.getRowCount()> 0) {
+			modelNhanvien.removeRow(0);
+		}
+		
+	}
+	private void themNV () throws RemoteException {
+		String tennv = txtten.getText().toString();
+		String diachi = txtdiachi.getText().toString();
+		String sdt = txtsdt.getText().toString();
+		String chucvu =txtchucvu.getText().toString();
+		String tuoi = txttuoi.getText().toString();
+		if(tennv.isBlank() && diachi.isBlank() && sdt.isBlank() && chucvu.isBlank() && tuoi.isBlank()) {
+			JOptionPane.showMessageDialog(this, "Dữ liệu rỗng! Vui lòng nhập vào");
+		}
+		else {
+			NhanVien nv = new NhanVien(chucvu,diachi,sdt,tennv,tuoi);
+			nhanVienService.addNV(nv);
+			clearTable();
+			loadTable();
+			
+		}
+	}
+	private void suaNV() throws RemoteException {
+		int i = tableNV.getSelectedRow();
+		if(i==-1) {
+			JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần sửa");
+		}
+		else {
+			int ma =  Integer.parseInt(txtma.getText().toString());
+				String chucvu =txtchucvu.getText().toString();
+				String diachi = txtdiachi.getText().toString();	
+				String sdt = txtsdt.getText().toString();
+				String tennv = txtten.getText().toString();
+				String tuoi = txttuoi.getText().toString();
+			NhanVien nv = new NhanVien(ma,chucvu,diachi,sdt,tennv,tuoi);
+			int tb;
+			tb = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn sửa thông tin bàn này không?","Cảnh báo", JOptionPane.YES_OPTION);
+			if(tb == JOptionPane.YES_OPTION) {
+				System.out.println(nv);
+				nhanVienService.updateNV(nv);
+				JOptionPane.showMessageDialog(this, "Thông tin bàn này đã được cập nhập");
+				clearTable();
+				loadTable();
+				
+			}
+		}
+	}
+	private void xoaNV() throws RemoteException {
+		int i = tableNV.getSelectedRow();
+		if(i==-1) {
+			JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần xóa");
+		}
+		else {
+			int ma =  Integer.parseInt(txtma.getText().toString());			
+			String chucvu ="!not exist";
+			String diachi = "!not exist ";	
+			String sdt = "!not exist";
+			String tennv = txtten.getText().toString();
+			String tuoi = "!not exist";
+			NhanVien nv = new NhanVien(ma,chucvu,diachi,sdt,tennv,tuoi);
+			int tb;
+			tb = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn xóa thông tin bàn này không?","Cảnh báo", JOptionPane.YES_OPTION);
+			if(tb == JOptionPane.YES_OPTION) {
+				nhanVienService.deleteNV(nv);
+				JOptionPane.showMessageDialog(this, "Thông tin bàn này đã được cập nhập");
+				clearTable();
+				loadTable();
+				
+			}
+		}
+	}
+	private void timKiem() throws NumberFormatException, RemoteException {
+		String tim = txttimkiem.getText().toString();
+		if(tim.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Tìm kiếm không được trống");
+		}
+		else {
+			clearTable();
+			
+			NhanVien nv = nhanVienService.getNVById(Integer.parseInt(tim));
+			modelNhanvien.addRow(new Object[] {
+					nv.getMaNV(),nv.getChucVu(),nv.getDiaChi(),nv.getSdt(),nv.getTenNhanVien(),nv.getTuoi()
+			});
+//			loadTable();
+		}
+	}
+	private void xoaRong() {
+		txtma.setText("");
+		txttuoi.setText("");
+		txtdiachi.setText("");
+		txtchucvu.setText("");
+		txtsdt.setText("");
+		txtten.requestFocus();
+	}
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		int row = tableNV.getSelectedRow();
+		txtma.setText(modelNhanvien.getValueAt(row, 0).toString());
+		txtten.setText(modelNhanvien.getValueAt(row, 4).toString());
+		txtsdt.setText(modelNhanvien.getValueAt(row, 3).toString());
+		txttuoi.setText(modelNhanvien.getValueAt(row, 5).toString());
+		txtchucvu.setText(modelNhanvien.getValueAt(row, 1).toString());
+		txtdiachi.setText(modelNhanvien.getValueAt(row, 2).toString());
+		
+	}
+
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Object o = e.getSource();
+		if(o.equals(btnXoa)) {
+			try {
+				xoaNV();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		if(o.equals(btnXoarong)) {
+			xoaRong();
+		}
+		if(o.equals(btnThem)) {
+			try {
+				themNV();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		if(o.equals(btnSua)) {
+			try {
+				suaNV();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		if(o.equals(btnreset)) {
+			try {
+				loadTable();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		if(o.equals(btntim)) {
+			try {
+				timKiem();
+			} catch (NumberFormatException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 		
 	}
 

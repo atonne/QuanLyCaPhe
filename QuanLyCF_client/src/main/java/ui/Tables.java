@@ -1,4 +1,4 @@
-package ui;
+ package ui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -76,7 +76,7 @@ public class Tables extends JFrame implements ActionListener, MouseListener{
 		getContentPane().add(pMain);
 		pMain.setLayout(null);
 		
-		banService = (BanService) Naming.lookup("rmi://192.168.1.99:9999/banService");
+		banService = (BanService) Naming.lookup("rmi://192.168.1.3:9999/banService");
 		
 		
 		JPanel panelnhaplieu = new JPanel();
