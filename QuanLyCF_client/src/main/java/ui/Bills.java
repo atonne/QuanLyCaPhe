@@ -2,12 +2,23 @@ package ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Panel;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,16 +37,22 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+import entity.Ban;
+import service.BanService;
+import service.CTHDService;
+import service.HoaDonService;
+import service.ThucUongService;
 
 
-public class Bills extends JFrame {
 
+public class Bills extends JFrame  implements ActionListener, MouseListener{
+
+	private BanService banService;
 	private JPanel contentPane;
 	private Panel pMain;
 	private JTextField txtTim;
 	private JButton btnTim;
 	private JPanel pPhong;
-	private JPanel pBan;
 	private JComboBox<String> cbbLoaiMH;
 	private JComboBox<String> cbbTenMH;
 	private JTextField txtSoLuong;
@@ -49,6 +66,11 @@ public class Bills extends JFrame {
 	private JButton btnThanhToan;
 	private JButton btnLamMoiHD;
 	private JButton btnInHoaDon;
+	private JTable tblBan;
+	private DefaultTableModel modelBan;
+	private HoaDonService hoaDonService;
+	private CTHDService cthdService;
+	private ThucUongService thucUongService;
 
 	/**
 	 * Launch the application.
@@ -61,7 +83,11 @@ public class Bills extends JFrame {
 	public Panel getPanel() {
 		return pMain;
 	}
-	public Bills() {
+	public Bills() throws MalformedURLException, RemoteException, NotBoundException {
+		banService = (BanService) Naming.lookup("rmi://192.168.1.99:9999/banService");
+		hoaDonService = (HoaDonService) Naming.lookup("rmi://192.168.1.99:9999/hoaDonService");
+		cthdService  = (CTHDService) Naming.lookup("rmi://192.168.1.99:9999/cthdService");
+		thucUongService = (ThucUongService) Naming.lookup("rmi://192.168.1.99:9999/thucUongService");
 		getContentPane().setLayout(null);
 		pMain = new Panel();
 		pMain.setBounds(0, 0, 1281, 606);
@@ -104,15 +130,52 @@ public class Bills extends JFrame {
 		lblHeaderBan.setBounds(551, 47, 162, 26);
 		pMain.add(lblHeaderBan);
 		
-		pBan = new JPanel();	
-		pBan.setBackground(Color.white);
 		
-		JScrollPane scrollPane = new JScrollPane(pBan);
-		scrollPane.setViewportView(pBan);
-		scrollPane.setBorder(new LineBorder(Color.BLACK));
-		pBan.setLayout(new GridLayout(0, 4, 0, 0));
+//		String col1 [] = {"Mã bàn", "Tên bàn", "Tình trạng bàn"};
+//		modelBan = new DefaultTableModel(col1, 0);	
+//		tblBan = new JTable(modelBan);
+//		tblBan.setShowHorizontalLines(true);
+//		tblBan.setShowGrid(true);
+//		tblBan.setBackground(Color.WHITE);
+//		tblBan.setFont(new Font("SansSerif", Font.PLAIN, 14));
+//		JTableHeader tbHeader1 = tblBan.getTableHeader();
+//		tbHeader1.setBackground(new Color(161, 122, 96));
+//		tbHeader1.setForeground(Color.white);
+//		tbHeader1.setFont(new Font("SansSerif", Font.BOLD, 14));
+//		tblBan.setRowHeight(30);
+//		
+//		JScrollPane scrollPane = new JScrollPane(tblBan);
+//		scrollPane.setBorder(new LineBorder(Color.BLACK));
+//		scrollPane.setBounds(24, 72, 1223, 130);
+//		pMain.add(scrollPane);
+//		
+//		tblBan = new JTable();
+//		scrollPane.setViewportView(tblBan);
+		
+		String col1 [] = {"Mã bàn", "Tên bàn", "Tình trạng"};
+		modelBan = new DefaultTableModel(col1,0);	
+		tblBan = new JTable(modelBan);
+		tblBan.setShowHorizontalLines(true);
+		tblBan.setShowGrid(true);
+		tblBan.setBackground(Color.WHITE);
+		tblBan.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		JTableHeader tbHeader1 = tblBan.getTableHeader();
+		tbHeader1.setBackground(new Color(161, 122, 96));
+		tbHeader1.setForeground(Color.white);
+		tbHeader1.setFont(new Font("SansSerif", Font.BOLD, 14));
+		tblBan.setRowHeight(30);
+		
+		DefaultTableCellRenderer rightRenderer1 = new DefaultTableCellRenderer();
+		rightRenderer1.setHorizontalAlignment(JLabel.RIGHT);
+		tblBan.getColumnModel().getColumn(2).setCellRenderer(rightRenderer1);
+
+	
+		JScrollPane scrollPane = new JScrollPane(tblBan);
 		scrollPane.setBounds(24, 72, 1223, 130);
+		scrollPane.setBounds(24, 72, 1223, 130);
+		scrollPane.setBackground(new Color(164, 44, 167));
 		pMain.add(scrollPane);
+
 		
 		JPanel pDichVu = new JPanel();
 		pDichVu.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "Thức uống", TitledBorder.CENTER, TitledBorder.TOP, null, Color.BLACK));
@@ -287,6 +350,44 @@ public class Bills extends JFrame {
 		btnInHoaDon.setBounds(25, 223, 176, 33);
 		
 		pThanhToan.add(btnInHoaDon);
+		
+		loadBan();
+		System.out.println(hoaDonService.getHoaDonTheoMaBan(1));
 	}
+	public void loadBan() throws RemoteException {
 
+		List<Ban> lsBan =  banService.getListBan();
+		for(Ban ban : lsBan) {
+			modelBan.addRow(new Object[] {
+					ban.getMaBan(), ban.getTenBan(), ban.getTinhTrangBan()
+			});
+		
+		
+		}
+	}
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		int row = tblBan.getSelectedRow();
+		
+	}
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }

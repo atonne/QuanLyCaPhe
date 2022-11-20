@@ -206,7 +206,6 @@ public class Tables extends JFrame implements ActionListener, MouseListener{
 	private void loadTable() throws RemoteException {
 		clearTable();
 		List<Ban> lsBan = banService.getListBan();
-		System.out.println(lsBan);
 		for(Ban ban: lsBan) {
 			modelBan.addRow(new Object[] {
 					ban.getMaBan(), ban.getTenBan(), ban.getTinhTrangBan()

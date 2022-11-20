@@ -202,7 +202,18 @@ public class Home extends JFrame implements ActionListener{
 				e1.printStackTrace();
 			}
 		if(o.equals(btnHoaDon))
-			loadFrmHoaDon();
+			try {
+				loadFrmHoaDon();
+			} catch (MalformedURLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (NotBoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		
 	}
 	public void resetColorMenu() {
@@ -267,7 +278,7 @@ public class Home extends JFrame implements ActionListener{
 		pContent.add(frmNuoc.getPanel());
 	
 }
-	public void loadFrmHoaDon() {
+	public void loadFrmHoaDon() throws MalformedURLException, RemoteException, NotBoundException {
 		setTitle("Quáº£n lÃ½ HoÃ¡ Ä‘Æ¡n");
 		resetColorMenu();
 		pContent.removeAll();
