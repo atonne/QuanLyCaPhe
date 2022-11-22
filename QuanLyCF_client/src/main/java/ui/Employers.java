@@ -84,7 +84,7 @@ public class Employers extends JFrame implements ActionListener, MouseListener {
 		getContentPane().add(pMain);
 		pMain.setLayout(null);
 		
-		nhanVienService = (NhanVienService) Naming.lookup("rmi://192.168.1.3:9999/nhanVienService");
+		nhanVienService = (NhanVienService) Naming.lookup("rmi://192.168.1.8:9999/nhanVienService");
 		
 		
 		JPanel panelnhaplieu = new JPanel();

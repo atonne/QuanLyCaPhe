@@ -83,7 +83,7 @@ public class Customers extends JFrame  implements ActionListener, MouseListener 
 		getContentPane().add(pMain);
 		pMain.setLayout(null);
 		
-		khachHangService = (KhachHangService) Naming.lookup("rmi://192.168.1.3:9999/khachHangService");
+		khachHangService = (KhachHangService) Naming.lookup("rmi://192.168.1.8:9999/khachHangService");
 		
 		JPanel panelnhaplieu = new JPanel();
 		panelnhaplieu.setLayout(null);

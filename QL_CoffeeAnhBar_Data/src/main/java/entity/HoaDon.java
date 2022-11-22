@@ -53,6 +53,17 @@ public class HoaDon  implements Serializable{
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	public HoaDon(Ban ban, KhachHang khachHang, NhanVien nhanVien, double donGia, String phuThu,
+			String trangThai) {
+		super();
+		this.ban = ban;
+		this.khachHang = khachHang;
+		this.nhanVien = nhanVien;
+		this.donGia = donGia;
+		this.phuThu = phuThu;
+		this.trangThai = trangThai;
+	}
+
 	public int getMaHD() {
 		return maHD;
 	}

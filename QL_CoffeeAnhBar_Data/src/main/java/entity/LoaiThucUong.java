@@ -28,6 +28,10 @@ public class LoaiThucUong implements Serializable{
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	public LoaiThucUong(String string) {
+		// TODO Auto-generated constructor stub
+		this.tenLoaiTU = string;
+	}
 	public int getMaLoaiTU() {
 		return maLoaiTU;
 	}

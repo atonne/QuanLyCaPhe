@@ -11,15 +11,19 @@ import java.awt.Panel;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -38,14 +42,22 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import entity.Ban;
+import entity.CTHD;
+import entity.HoaDon;
+import entity.LoaiThucUong;
+import entity.ThucUong;
 import service.BanService;
+import service.CTHDService;
+import service.HoaDonService;
 /*import service.CTHDService;
 import service.HoaDonService;
 import service.ThucUongService;
 */
+import service.LoaiThucUongService;
+import service.ThucUongService;
 
 
-public class Bills extends JFrame  implements ActionListener, MouseListener{
+public class Bills extends JFrame  implements ActionListener, MouseListener, ItemListener{
 
 	private BanService banService;
 	private JPanel contentPane;
@@ -68,10 +80,16 @@ public class Bills extends JFrame  implements ActionListener, MouseListener{
 	private JButton btnInHoaDon;
 	private JTable tblBan;
 	private DefaultTableModel modelBan;
+	private LoaiThucUongService loaiThucUongService;
+	private ThucUongService thucUongService;
+	private HoaDonService hoaDonService;
+	private CTHDService cthdService;
 	/*
 	 * private HoaDonService hoaDonService; private CTHDService cthdService; private
 	 * ThucUongService thucUongService;
 	 */
+	private JLabel lblHeaderBan;
+
 
 	/**
 	 * Launch the application.
@@ -85,14 +103,12 @@ public class Bills extends JFrame  implements ActionListener, MouseListener{
 		return pMain;
 	}
 	public Bills() throws MalformedURLException, RemoteException, NotBoundException {
-		banService = (BanService) Naming.lookup("rmi://192.168.1.99:9999/banService");
-		/*
-		 * hoaDonService = (HoaDonService)
-		 * Naming.lookup("rmi://192.168.1.99:9999/hoaDonService"); cthdService =
-		 * (CTHDService) Naming.lookup("rmi://192.168.1.99:9999/cthdService");
-		 * thucUongService = (ThucUongService)
-		 * Naming.lookup("rmi://192.168.1.99:9999/thucUongService");
-		 */
+		banService = (BanService) Naming.lookup("rmi://192.168.1.8:9999/banService");
+		loaiThucUongService = (LoaiThucUongService) Naming.lookup("rmi://192.168.1.8:9999/loaiThucUongService");
+		thucUongService = (ThucUongService) Naming.lookup("rmi://192.168.1.8:9999/thucUongService");
+		hoaDonService = (HoaDonService) Naming.lookup("rmi://192.168.1.8:9999/hoaDonService");
+		cthdService = (CTHDService) Naming.lookup("rmi://192.168.1.8:9999/cthdService");
+
 		getContentPane().setLayout(null);
 		pMain = new Panel();
 		pMain.setBounds(0, 0, 1281, 606);
@@ -130,32 +146,13 @@ public class Bills extends JFrame  implements ActionListener, MouseListener{
 		
 		pMain.add(btnTim);
 		
-		JLabel lblHeaderBan = new JLabel("Bàn");
+		lblHeaderBan = new JLabel("Bàn");
 		lblHeaderBan.setFont(new Font("SansSerif", Font.BOLD, 18));
 		lblHeaderBan.setBounds(551, 47, 162, 26);
 		pMain.add(lblHeaderBan);
 		
 		
-//		String col1 [] = {"Mã bàn", "Tên bàn", "Tình trạng bàn"};
-//		modelBan = new DefaultTableModel(col1, 0);	
-//		tblBan = new JTable(modelBan);
-//		tblBan.setShowHorizontalLines(true);
-//		tblBan.setShowGrid(true);
-//		tblBan.setBackground(Color.WHITE);
-//		tblBan.setFont(new Font("SansSerif", Font.PLAIN, 14));
-//		JTableHeader tbHeader1 = tblBan.getTableHeader();
-//		tbHeader1.setBackground(new Color(161, 122, 96));
-//		tbHeader1.setForeground(Color.white);
-//		tbHeader1.setFont(new Font("SansSerif", Font.BOLD, 14));
-//		tblBan.setRowHeight(30);
-//		
-//		JScrollPane scrollPane = new JScrollPane(tblBan);
-//		scrollPane.setBorder(new LineBorder(Color.BLACK));
-//		scrollPane.setBounds(24, 72, 1223, 130);
-//		pMain.add(scrollPane);
-//		
-//		tblBan = new JTable();
-//		scrollPane.setViewportView(tblBan);
+
 		
 		String col1 [] = {"Mã bàn", "Tên bàn", "Tình trạng"};
 		modelBan = new DefaultTableModel(col1,0);	
@@ -201,6 +198,13 @@ public class Bills extends JFrame  implements ActionListener, MouseListener{
 		cbbLoaiMH.setBorder(new LineBorder(Color.BLACK));
 		pDichVu.add(cbbLoaiMH);
 		
+		List<LoaiThucUong> lsLoai = loaiThucUongService.getAllLoaiThucUong();
+		for(LoaiThucUong loai : lsLoai) {
+			cbbLoaiMH.addItem(loai.getTenLoaiTU());
+		}
+		
+		
+		
 		JLabel lblSubTenMH = new JLabel("Tên thức uống:");
 		lblSubTenMH.setFont(new Font("SansSerif", Font.PLAIN, 15));
 		lblSubTenMH.setBounds(10, 78, 102, 26);
@@ -211,7 +215,17 @@ public class Bills extends JFrame  implements ActionListener, MouseListener{
 		cbbTenMH.setBackground(Color.WHITE);
 		cbbTenMH.setBounds(112, 76, 159, 30);
 		cbbTenMH.setBorder(new LineBorder(Color.BLACK));
+		
+
+		String tenMH = (String) cbbLoaiMH.getSelectedItem();
+		int ma = loaiThucUongService.getMaLoaiTheoTen(tenMH);
+		List<ThucUong> ls = loaiThucUongService.getThucUongTheoLoai(ma);
+		cbbTenMH.removeAllItems();
+		for(ThucUong tu : ls) {
+			cbbTenMH.addItem(tu.getTenTU());
+		}
 		pDichVu.add(cbbTenMH);
+		
 		
 		JLabel lblSoluongMH = new JLabel("Số lượng:");
 		lblSoluongMH.setFont(new Font("SansSerif", Font.PLAIN, 15));
@@ -357,7 +371,12 @@ public class Bills extends JFrame  implements ActionListener, MouseListener{
 		pThanhToan.add(btnInHoaDon);
 		
 		loadBan();
-		/* System.out.println(hoaDonService.getHoaDonTheoMaBan(1)); */
+		
+		
+		cbbLoaiMH.addItemListener(this);
+		cbbTenMH.addItemListener(this);
+		tblBan.addMouseListener(this);
+		tbMatHang.addMouseListener(this);
 	}
 	public void loadBan() throws RemoteException {
 
@@ -370,13 +389,80 @@ public class Bills extends JFrame  implements ActionListener, MouseListener{
 		
 		}
 	}
+	public void themMHVaoCTDDP() {
+		String tenMH = cbbTenMH.getSelectedItem().toString();
+		String loaiMH = cbbLoaiMH.getSelectedItem().toString();
+		int soLuongMH = Integer.parseInt(txtSoLuong.getText());
+		if(modelMatHang.getRowCount()<1) {
+//			
+//			cthdService.addCTHD(cthd);
+		}
+	}
+	public boolean kiemTraThucUongTrongBang() {
+		if(timRow()!= -1) {
+			
+		}
+		return true;
+	}
+	public int timRow() {			
+		for(int i =0; i< tbMatHang.getRowCount(); i++) {
+			if(modelMatHang.getValueAt(i, 0).toString().equalsIgnoreCase(cbbTenMH.getSelectedItem().toString())&& modelMatHang.getValueAt(i, 1).toString().equalsIgnoreCase(cbbLoaiMH.getSelectedItem().toString()))
+				return i;
+		}
+		return -1;
+	}
+	private void clearTableMatHang() {
+		while(tbMatHang.getRowCount()> 0) {
+			modelMatHang.removeRow(0);
+		}
+	}
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
+		Object o = e.getSource();
+		if(rdbtnGiamSL.isSelected()) {
+			btnThemNuoc.setText("Giảm mặt hàng");
+			
+		} else {
+			btnThemNuoc.setText("Thêm mặt hàng");
+
+		}
+		if(o.equals(btnThemNuoc)) {
+			themMHVaoCTDDP();
+//			lamMoiThanhToan();
+		}
 	}
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		int row = tblBan.getSelectedRow();
+		Object o = e.getSource();
+		if(o.equals(tbMatHang)) {
+			int row = tbMatHang.getSelectedRow();
+			cbbTenMH.setSelectedItem(modelMatHang.getValueAt(row,0).toString());
+			cbbLoaiMH.setSelectedItem(modelMatHang.getValueAt(row,1).toString());
+			txtSoLuong.setText(modelMatHang.getValueAt(row,2).toString());
+			}
+		if(o.equals(tblBan)) {
+			int row = tblBan.getSelectedRow();
+			int maBan = Integer.parseInt(modelBan.getValueAt(row, 0).toString());
+			try {
+				clearTableMatHang();
+				HoaDon hd = hoaDonService.getHoaDonTheoMaBan(maBan);
+				List<CTHD> lsCthd = cthdService.getCthdTheoMaHD(hd.getMaHD());
+				if(lsCthd != null) {
+					for(CTHD ct : lsCthd) {
+						double tong = ct.getSoLuong() * ct.getThucUong().getGiaTU(); 
+						modelMatHang.addRow(new Object[] {
+								ct.getThucUong().getTenTU(), ct.getThucUong().getLoaiThucUong().getTenLoaiTU(), ct.getSoLuong(), ct.getThucUong().getGiaTU(),tong 
+						});
+					}
+				}
+				else {
+					clearTableMatHang();
+				}
+	
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 		
 	}
 	public void mousePressed(MouseEvent e) {
@@ -394,5 +480,33 @@ public class Bills extends JFrame  implements ActionListener, MouseListener{
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+	public void itemStateChanged(ItemEvent e) {
+		// TODO Auto-generated method stub
+		Object o = e.getItem();
+		if(o == cbbLoaiMH.getSelectedItem()) {
+			/*
+			 * Nếu cbb loại mặt hàng hàng thay đổi, thì cbb tên mặt hàng sẽ được hiển thị danh sách lên 
+			 */
+			String tenMH = (String) cbbLoaiMH.getSelectedItem();
+			int ma =0 ;
+			try {
+				ma = loaiThucUongService.getMaLoaiTheoTen(tenMH);
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			List<ThucUong> ls= null;
+			try {
+				ls = loaiThucUongService.getThucUongTheoLoai(ma);
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			cbbTenMH.removeAllItems();
+			for(ThucUong tu : ls) {
+				cbbTenMH.addItem(tu.getTenTU());
+			}
+		}
 	}
 }

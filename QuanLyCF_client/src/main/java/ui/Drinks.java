@@ -7,6 +7,11 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Panel;
 import java.awt.event.KeyEvent;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,6 +26,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+import entity.LoaiThucUong;
+import entity.ThucUong;
+import service.KhachHangService;
+import service.LoaiThucUongService;
+import service.ThucUongService;
+
 public class Drinks extends JFrame {
 
 	private JPanel contentPane;
@@ -34,6 +45,8 @@ public class Drinks extends JFrame {
 	private String column[] = { "Mã thức uống", "Tên thức uống", "Số lượng", "Đơn giá", "Loại"};
 	private DefaultTableModel modelNuoc;
 	private JTable tableNuoc;
+	private ThucUongService thucUongService;
+	private LoaiThucUongService loaiThucUongService;
 
 
 
@@ -47,7 +60,13 @@ public class Drinks extends JFrame {
 	public Panel getPanel() {
 		return pMain;
 	}
-	public Drinks() {
+	public Drinks() throws MalformedURLException, RemoteException, NotBoundException {
+		thucUongService = (ThucUongService) Naming.lookup("rmi://192.168.1.8:9999/thucUongService");
+		loaiThucUongService = (LoaiThucUongService) Naming.lookup("rmi://192.168.1.8:9999/loaiThucUongService");
+		LoaiThucUong loai1 = new LoaiThucUong("pha che");
+		ThucUong tu = new ThucUong(loai1, "chanh nong", 22, 2000, "con");
+		System.out.println(tu);
+		thucUongService.addThucUong(tu);
 		getContentPane().setLayout(null);
 		pMain = new Panel();
 		pMain.setBackground(Color.WHITE);
@@ -87,6 +106,7 @@ public class Drinks extends JFrame {
 		panelnhaplieu.add(lblEmail);
 		
 		textField = new JTextField("");
+		textField.setEditable(false);
 		textField.setColumns(10);
 		textField.setBounds(122, 12, 226, 20);
 		panelnhaplieu.add(textField);
@@ -175,9 +195,24 @@ public class Drinks extends JFrame {
 		btnXoarong.setForeground(Color.WHITE);
 		btnXoarong.setBounds(1083, 155, 124, 37);
 		paneldb.add(btnXoarong);
-		
+		loadThucUong();
 	}
-
+	private void loadThucUong() throws RemoteException {
+		clearTable();
+		List<ThucUong> lsThucUong = thucUongService.getAllThucUong();
+		System.out.println(lsThucUong);
+		for(ThucUong tu : lsThucUong) {
+			LoaiThucUong loai = loaiThucUongService.getLoaiThucUongTheoMa(tu.getLoaiThucUong().getMaLoaiTU());
+			modelNuoc.addRow(new Object[] {
+					tu.getMaTU(), tu.getTenTU(),tu.getSoLuongTU(), tu.getGiaTU(), loai.getTenLoaiTU()
+			});
+		}
+	}
+	private void clearTable() {
+		while(tableNuoc.getRowCount()> 0) {
+			modelNuoc.removeRow(0);
+		}
+	}
 	}
 
 

@@ -61,11 +61,7 @@ public class Home extends JFrame implements ActionListener{
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 * @param txtpassword 
-	 * @param txtusername 
-	 */
+
 	public Home() {
 		setTitle("WELLCOME TO ANH BAR COFFEE STORES");
 		setLocationRelativeTo(null);
@@ -209,7 +205,18 @@ public class Home extends JFrame implements ActionListener{
 				e2.printStackTrace();
 			}
 		if(o.equals(btnThucUong))
-			loadFrmNuoc();
+			try {
+				loadFrmNuoc();
+			} catch (MalformedURLException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			} catch (RemoteException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			} catch (NotBoundException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
 		if(o.equals(btnBan))
 			try {
 				loadFrmBan();
@@ -290,7 +297,7 @@ public class Home extends JFrame implements ActionListener{
 		pContent.add(frmBan.getPanel());
 	
 }
-	public void loadFrmNuoc() {
+	public void loadFrmNuoc() throws MalformedURLException, RemoteException, NotBoundException {
 		setTitle("Quáº£n lÃ½ NÆ°á»›c");
 		resetColorMenu();
 		pContent.removeAll();

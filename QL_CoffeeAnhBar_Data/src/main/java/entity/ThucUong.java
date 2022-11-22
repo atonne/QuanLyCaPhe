@@ -40,6 +40,13 @@ public class ThucUong implements Serializable{
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	public ThucUong(LoaiThucUong loaiThucUong, String tenTU, int soLuongTU, double giaTU, String trangThai) {
+		this.loaiThucUong = loaiThucUong;
+		this.tenTU = tenTU;
+		this.soLuongTU = soLuongTU;
+		this.giaTU = giaTU;
+		this.trangThai = trangThai;
+	}
 	public int getMaTU() {
 		return maTU;
 	}
